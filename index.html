@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>东莞仓 FIFO 可行性方案</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c2230; --ink:#e7edf3; --mut:#9aa7b4;
+    --line:#2a3340; --ok:#3fb950; --okbg:#10331b; --warn:#d29922; --warnbg:#33280a;
+    --bad:#f85149; --badbg:#3a1518; --yel:#e3b341; --yelbg:#332b0a; --gr:#2ea043;
+    --blu:#58a6ff; --blu-bg:#0d2138; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 80px}
+  a{color:var(--blu);text-decoration:none}
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(14,17,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0}
+  .topbar .wrap{padding-top:0;padding-bottom:0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{font-weight:700;font-size:15px;white-space:nowrap}
+  .nav{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .nav a{font-size:13px;padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel)}
+  .nav a.d{color:var(--yel)} .nav a.s{color:var(--ok)} .nav a.r{color:var(--bad)} .nav a.z{color:var(--mut)}
+  /* hero */
+  .hero{padding:34px 0 10px}
+  .hero h1{font-size:30px;margin:0 0 6px;letter-spacing:.5px}
+  .hero .sub{color:var(--mut);font-size:15px;margin-bottom:18px}
+  .statbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .stat{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:11px;font-weight:600;font-size:14px;border:1px solid var(--line)}
+  .stat.d{background:var(--yelbg);color:var(--yel);border-color:#4a3f0c}
+  .stat.s{background:var(--okbg);color:var(--ok);border-color:#13361c}
+  .stat.r{background:var(--badbg);color:var(--bad);border-color:#3c171a}
+  .stat .n{font-size:20px;font-weight:800}
+  .verdict{margin-top:14px;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,#10331b,#0d2138);border:1px solid #1c4a2c;font-size:15px}
+  .verdict b{color:var(--ok)}
+  /* layer */
+  .layer{margin-top:34px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .layer > .head{padding:16px 22px;display:flex;align-items:center;gap:12px}
+  .layer.d > .head{background:var(--yelbg);border-bottom:1px solid #4a3f0c}
+  .layer.s > .head{background:var(--okbg);border-bottom:1px solid #13361c}
+  .layer.r > .head{background:var(--badbg);border-bottom:1px solid #3c171a}
+  .layer.z > .head{background:var(--panel2);border-bottom:1px solid var(--line)}
+  .layer .head .tag{font-size:12px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:6px}
+  .layer.d .tag{background:var(--yel);color:#1a1400}
+  .layer.s .tag{background:var(--ok);color:#04130a}
+  .layer.r .tag{background:var(--bad);color:#1a0405}
+  .layer.z .tag{background:var(--mut);color:#0e1116}
+  .layer .head h2{margin:0;font-size:19px}
+  .layer .body{padding:20px 22px;background:var(--panel)}
+  .layer.d .body{background:#14160c}
+  .layer.s .body{background:#0c150f}
+  .layer.r .body{background:#140d0e}
+  .layer.z .body{background:var(--panel)}
+  /* decision card */
+  .dec{border-left:4px solid var(--yel);background:var(--panel2);border-radius:0 10px 10px 0;padding:14px 16px;margin:12px 0}
+  .dec .q{font-weight:700;font-size:15px;color:#f3e3a8}
+  .dec .opt{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+  .pill{font-size:13px;padding:4px 10px;border-radius:18px;border:1px solid var(--line);background:var(--panel)}
+  .pill.rec{background:var(--yelbg);border-color:var(--yel);color:var(--yel);font-weight:600}
+  .dec .imp{margin-top:7px;color:var(--mut);font-size:13px}
+  /* fact card */
+  .fact{border-left:4px solid var(--ok);background:var(--panel2);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0}
+  .fact b{color:#8ce99a}
+  /* risk */
+  .p0{border:1px solid var(--bad);background:var(--badbg);border-radius:12px;padding:14px 18px;margin:12px 0}
+  .p0 .ttl{color:var(--bad);font-weight:800;font-size:16px;display:flex;gap:8px;align-items:center}
+  .lane{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .risk{font-size:13px;padding:6px 12px;border-radius:18px;border:1px solid var(--line);background:var(--panel)}
+  .risk.h{background:var(--badbg);border-color:#3c171a;color:#ff9a93}
+  .risk.m{background:var(--warnbg);border-color:#4a3a0c;color:#f0c75a}
+  .risk.l{background:var(--panel2);color:var(--mut)}
+  .honest{margin-top:8px;padding:11px 14px;border-radius:10px;background:#1a1411;border:1px dashed #5a4632;font-size:13px;color:#e6c79a}
+  /* generic */
+  h3{margin:18px 0 8px;font-size:16px;color:#cdd9e5}
+  h4{margin:14px 0 4px;font-size:14px;color:#cdd9e5}
+  ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:#cdd9e5}
+  code{background:#0c1118;padding:1px 6px;border-radius:5px;color:#9be7c4;font-size:12.5px}
+  .wh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:12px 0}
+  .wh{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--panel2);position:relative}
+  .wh.pilot{border-color:var(--gr);box-shadow:0 0 0 1px var(--gr) inset}
+  .wh .role{font-size:12px;color:var(--mut);margin:2px 0 6px}
+  .wh .pos{font-size:12px;color:var(--blu);margin-top:6px}
+  .pilotag{position:absolute;top:-9px;right:10px;background:var(--gr);color:#04130a;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+  .pin{margin:6px 0;padding:8px 12px;border-radius:8px;font-size:13px;border-left:4px solid var(--warn);background:#1a1505}
+  .step{display:flex;gap:12px;margin:8px 0;align-items:flex-start}
+  .step .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--blu-bg);color:var(--blu);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .step .t{flex:1;font-size:14px}
+  .svgbox{background:#0c1118;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;text-align:center}
+  .svgbox svg{max-width:100%;height:auto}
+  .foot{margin-top:40px;color:var(--mut);font-size:12px;text-align:center;border-top:1px solid var(--line);padding-top:18px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:6px 0 0}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">🧭 东莞仓 FIFO 可行性方案</div>
+    <nav class="nav">
+      <a class="s" href="#L1">🟢 已确认</a>
+      <a class="r" href="#L2">🔴 风险告知</a>
+      <a class="d" href="#L3">🟡 待决策</a>
+      <a class="z" href="#L4">⚪ 支撑细节</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>东莞仓 FIFO（先进先出）可行性方案</h1>
+    <div class="sub">聚水潭「生产批次管理」落地 · 6 个分仓 · 基于飞书 FIFO 实操笔记（revision 1042）</div>
+    <div class="statbar">
+      <div class="stat d"><span class="n">4</span> 项业务侧待决策（无需领导拍板）</div>
+      <div class="stat s"><span class="n">10</span> 项已确认事实</div>
+      <div class="stat r"><span class="n">2</span> 条 P0 不可上线红线 · 8 项风险</div>
+    </div>
+    <div class="verdict">
+      <b>结论：可行，无需自研代码。</b> 聚水潭生产批次管理已具备 FIFO 全部基础能力，落地成败取决于「录入端扫标防错 + 分区存放 + 开关防护」三项执行，而非功能缺失。建议先拿 <b>佳珞裴-总仓</b> 作标杆试点（覆盖全业务场景、发货量小影响小），走顺后逐一落实其余分仓。
+    </div>
+  </div>
+
+  <!-- ============ LAYER 1: 已确认 ============ -->
+  <section class="layer s" id="L1">
+    <div class="head"><span class="tag">CONFIRMED</span><h2>第一层 · 已确认事实（验证确定，无需再议）</h2></div>
+    <div class="body">
+
+      <div class="fact"><b>① 聚水潭能力底座：</b>「生产批次管理」= FIFO 实现层，已覆盖东莞仓 6 分仓需求，无需自研代码。</div>
+      <div class="fact"><b>② FIFO 数据流（命门在录入端）：</b><b>供应商贴标 ⚠️需采购/供应链协调</b> → 收货扫标建批 → 上架扫标带出 → 拣货系统按"该仓位该 SKU 批次记录"自动 FIFO 指派最旧批次 → 出库。<b>拣货不扫批次</b>，FIFO 由系统保证，风险转移到"上架/盘点录得准不准"。<span class="imp" style="color:var(--mut);font-size:13px">数据流源头在供应商，仓库无法强制，详见第一层 D4。</span></div>
+      <div class="fact"><b>③ 上架/盘点扫码自动带出：</b>前提是批次先在系统维护，之后扫外箱批次标即自动带出、取消手选（解"上架还要选批次"痛点）。</div>
+      <div class="fact"><b>④ 批次编码规则：</b>以供应商贴的标签为准，扫描录入，<b>不自编、不加后缀、不用系统流水号</b>；格式严格 8 位日期 <code>YYYYMMDD</code>（如 20260811），其他格式一律禁止。<span class="imp" style="color:#f0c75a;font-size:13px">⚠️ 此规则成立的前提是<b>供应商配合贴码</b>——需采购/供应链部门协调推动，属公司级跨部门事项，非仓库可单方面达成。若供应商短期不配合，兜底为仓库收货台现场打印贴标（见 D4）。</span></div>
+      <div class="fact"><b>⑤ 贴码规则：</b>外箱与产品盒都贴生产日期标签，且<b>外箱标须 = 产品标</b>（防内外错配）。</div>
+      <div class="fact"><b>⑥ 全维护批次时按批次 FIFO；</b>同进有/无批次，系统先推无批次（库位从小到大）。</div>
+      <div class="fact"><b>⑦ 存货区简化流程（原生支持）：</b>开启后可在仓位分别设<b>存储区 / 拣货区</b>，即存拣分离的平台入口。</div>
+      <div class="fact"><b>⑧ 调拨已知约束：</b>开启生产批次后，调拨不支持从暂存位发起，须从"他位"调拨到对应分仓；特别地<b>佳珞裴总仓 → 百世云仓</b> 路径要重点验证。（云仓 FIFO 不在本方案范围，由云仓自身负责，不验证。）</div>
+      <div class="fact"><b>⑨ 卡板堆叠纪律：</b>库位足够时铺开存放、<b>不码太高太深</b>，让旧批次始终停在易取层，物理上降低"随手抓到新批次"的概率，压低伪 FIFO 残留漏洞影响面。</div>
+      <div class="fact"><b>⑩ 试点顺序已定：</b>FIFO 对 6 个分仓均重要，差异只在推广顺序——先拿 <b>佳珞裴-总仓</b> 作标杆试点（覆盖全业务场景、日发货量小影响小），走顺后逐一落实其余分仓。此为非领导拍板的业务侧决定。</div>
+
+    </div>
+  </section>
+
+  <!-- ============ LAYER 2: 风险 ============ -->
+  <section class="layer r" id="L2">
+    <div class="head"><span class="tag">RISK</span><h2>第二层 · 风险告知（上线前必读）</h2></div>
+    <div class="body">
+
+      <div class="p0">
+        <div class="ttl">🔴 P0 红线① · 预约送货与生产批次硬冲突</div>
+        <div>开启生产批次管理后，现有「供应商预约送货」功能直接报错 <code>错误！该业务不支持生产批次流程！</code>（已提需求 R159775，会不会做未知）。<b>PLBG 仓重度依赖预约送货，替代入库路径未落地前，该仓 FIFO 优先级降级。</b></div>
+        <div class="imp" style="color:var(--mut);font-size:13px;margin-top:6px">防护：试点仓先用非预约来货（首单/采购）验证，再回填预约送货场景；PLBG 仓需先确定替代入库路径。</div>
+      </div>
+
+      <div class="p0">
+        <div class="ttl">🔴 P0 红线② · 开关来回切丢数据</div>
+        <div>开启生产批次管理后关闭再打开，<b>原有生产批次信息一部分会丢失</b>。属真问题。</div>
+        <div class="imp" style="color:var(--mut);font-size:13px;margin-top:6px">防护：① 切换前全量导出批次库存快照；② 上线后严禁来回切开关；③ 出问题靠数据恢复而非关功能（因"开了不能关"，回滚=快照恢复）。</div>
+      </div>
+
+      <h3>风险分级一览</h3>
+      <div class="lane">
+        <span class="risk h">高 · 无批次先发破 FIFO（跨仓同仓都先推无批次）</span>
+        <span class="risk m">中 · 一位多批次回退受限</span>
+        <span class="risk m">中 · 暂存位开关混存须关</span>
+        <span class="risk m">中 · 拣货不扫批次·伪 FIFO 残留</span>
+        <span class="risk m">中 · 编码来源被替换（擅自手编）</span>
+        <span class="risk m">中 · 历史库存回填选错批次=盘盈</span>
+        <span class="risk l">低 · 去箱后无批次难追溯</span>
+      </div>
+
+      <div class="honest">
+        <b>实话说明（伪 FIFO 残留）：</b>同一库位放不同批次、拣货只扫仓位+SKU 不扫批次 → 系统记扣旧批、拣货员实际可能抓到顶部/最新的。这是"库存漂移/伪 FIFO"本质，但<b>比现在完全没 FIFO 强</b>——至少账面上强制批次顺序。彻底消除需开拣货批次扫码校验（暂未做），当前靠：①旧批放最易取处 ②商品贴批次码肉眼核对 ③同库位尽量单批次 ④卡板不码太高太深 ⑤定期盘点发现漂移。
+      </div>
+
+      <h3>防护要点（对照表）</h3>
+      <table>
+        <tr><th>风险</th><th>等级</th><th>核心防护</th></tr>
+        <tr><td>无批次先发破 FIFO</td><td>高</td><td>无批次与新批次严格分区存放（跨仓同仓都不混）</td></tr>
+        <tr><td>一位多批次回退</td><td>中</td><td>上线初期统一决策，不轻易切换一位/多位模式</td></tr>
+        <tr><td>暂存位开关</td><td>中</td><td>混存阶段关、全批次化后开</td></tr>
+        <tr><td>拣货不扫·伪 FIFO</td><td>中</td><td>摆放纪律+贴码+盘点（见实话说明）</td></tr>
+        <tr><td>编码来源被替换</td><td>中</td><td>禁止手编/加后缀，以供应商标签为准扫描</td></tr>
+        <tr><td>回填选错批次</td><td>中</td><td>用"商品盘点"一次性盘入，选已有批次</td></tr>
+        <tr><td>去箱后无批次</td><td>低</td><td>外箱+内盒都贴；拆箱重贴；系统记"箱=批次"按箱追溯</td></tr>
+      </table>
+
+    </div>
+  </section>
+
+  <!-- ============ LAYER 3: 待决策 ============ -->
+  <section class="layer d" id="L3">
+    <div class="head"><span class="tag">DECISION</span><h2>第三层 · 待决策（业务侧 / 执行侧确认）</h2></div>
+    <div class="body">
+      <p class="lead">经梳理：本方案落地以流程/软件为主、<b>先利旧、无新增预算、无组织调整</b>，<b>真正需领导拍板的卡点为 0</b>。以下为运营/业务侧待确认项，由你定即可，不必上报领导。</p>
+
+      <div class="dec">
+        <div class="q">D1 · 存储选型策略（在现有条件下怎么摆）</div>
+        <div class="opt">
+          <span class="pill rec">佳珞裴-总仓：严格存拣分离（拣货区+存储区）</span>
+          <span class="pill rec">Soyama / Wholesale-1：卡板存储为主（大货整批）</span>
+          <span class="pill rec">Wisco / PLBG / PuHuo：库内分区（轻量存拣分离）</span>
+        </div>
+        <div class="imp">建议默认如上：不做"全仓统一改存拣分离"，按分仓画像选型。层高有限，先走流程/软件固化，硬件（流利架/层板货架）等标杆跑顺再上。</div>
+      </div>
+
+      <div class="dec">
+        <div class="q">D2 · 旧库存批次化策略（执行层决策，非领导拍板）</div>
+        <div class="opt">
+          <span class="pill">① 一次性：各分仓全部旧库存生成生产批次</span>
+          <span class="pill rec">② 逐步：试点仓先批次化，其余随业务推进</span>
+          <span class="pill">③ 不管旧库存：旧货自然销售完，仅新库存用批次管理</span>
+        </div>
+        <div class="imp">这决定"暂存位生产批次开关何时开"的前置条件：只有全仓都批次化（含旧库存）后才能开开关；若留旧库存无批次，则混存阶段须保持开关关闭。三种选法对应不同工作量与过渡期长度——由运营侧定，不是领导决策。</div>
+      </div>
+
+      <div class="dec">
+        <div class="q">D3 · 两个开放问题定调（飞书文档遗留，批次码来源已转 D4）</div>
+        <div class="opt">
+          <span class="pill">保证期是否强制维护</span>
+          <span class="pill">商品贴日期是否影响客户体验</span>
+        </div>
+        <div class="imp">建议：食品/化妆品/电池强制维护保证期，普货留空=长期；内部批次码贴内盒封口/外箱不显眼处，不影响体验。批次码来源（工厂预印 vs 仓库贴）已定=以供应商贴标为准，其落地属跨部门协调，单列 D4，不在此选型。</div>
+      </div>
+
+      <div class="dec">
+        <div class="q">D4 · 供应商贴标协调（需采购/供应链主导，非仓库职责）</div>
+        <div class="opt">
+          <span class="pill">① 纳入供应商准入 / 采购协议条款</span>
+          <span class="pill">② 先头部供应商试点沟通模板</span>
+          <span class="pill">③ 暂不推，仓库收货台兜底打印</span>
+        </div>
+        <div class="imp">FIFO 数据流源头在供应商，仓库无法强制。"让供应商贴 YYYYMMDD 批次码"能否落地、快慢如何，取决于采购/供应链何时把它变成供应商交付要求。属<b>跨部门协调事项</b>，非领导拍板、亦非仓内可单方面决定；过渡期由仓库收货台现场打印贴标兜底（见④脚注）。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ LAYER 4: 支撑细节 ============ -->
+  <section class="layer z" id="L4">
+    <div class="head"><span class="tag">DETAIL</span><h2>第四层 · 支撑细节（按需查阅）</h2></div>
+    <div class="body">
+
+      <h3>4.1 六分仓适配（上线定位，非必要性分级）</h3>
+      <div class="legend"><span><i style="background:var(--gr)"></i>首批试点</span><span><i style="background:var(--blu)"></i>后续批次</span></div>
+      <div class="wh-grid">
+        <div class="wh pilot"><span class="pilotag">首批试点</span>
+          <h4>① 佳珞裴-总仓</h4>
+          <div class="role">国内小包 · ~100 单/天 · 全业务场景</div>
+          <div class="pos">定位：标杆 · 先用现有货架+卡板做库内分区（B）；跑顺后拣货层可加流利条升级（C，未来可选）</div>
+        </div>
+        <div class="wh"><h4>② PLBG 仓</h4><div class="role">历史库存 + 首单来货</div><div class="pos">定位：后续 · 历史货用商品盘点回填；首单走批次；受预约送货冲突影响优先级降级</div></div>
+        <div class="wh"><h4>③ Soyama 仓</h4><div class="role">FBA 备货 · 大货整批出</div><div class="pos">定位：后续 · 整批维度做批次，卡板存储为主</div></div>
+        <div class="wh"><h4>④ Wholesale-1</h4><div class="role">传统贸易大货 · 多客户 SKU</div><div class="pos">定位：后续 · 商品本体须贴含客户识别码 SKU（不能只贴外箱）</div>
+          <div class="pin" style="margin-top:8px">⚠ 贴码硬约束：库存多、周转慢，外箱破损后只贴外箱将发错客户；本体可识别是防串货最后防线。</div>
+        </div>
+        <div class="wh"><h4>⑤ Wisco 仓</h4><div class="role">Shopify 小包 · SKU 杂</div><div class="pos">定位：后续 · 普货宽松；带效期品强制批次</div></div>
+        <div class="wh"><h4>⑥ PuHuo 仓</h4><div class="role">供应商铺货</div><div class="pos">定位：后续 · 批次记供应商+日期，FIFO 软约束</div></div>
+      </div>
+
+      <h3>4.2 存储选型谱系（现有条件下 · 不靠买设备）</h3>
+      <p class="lead">现实条件：仓库只有 <b>普通货架</b> + <b>卡板</b> 两种存储设备，层高约 <b>4 米</b>。下面三方案的区别，<b>不在"要不要买设备"，而在"给这两种现有设备怎么分配角色、摆多严"</b>。A/B 均<span class="kbd">零新增设备</span>，用现有两设备当天即可落地。</p>
+      <div class="svgbox">
+        <svg viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+          <text x="340" y="20" fill="#e7edf3" font-size="14" text-anchor="middle" font-weight="bold">存储方案选型 · 演进方向（均基于普通货架+卡板） →</text>
+          <!-- A -->
+          <rect x="20" y="45" width="190" height="210" rx="12" fill="#1c2230" stroke="#2a3340"/>
+          <text x="115" y="73" fill="#9aa7b4" font-size="13" text-anchor="middle" font-weight="bold">A 纯全仓拣货</text>
+          <text x="115" y="93" fill="#9aa7b4" font-size="11" text-anchor="middle">（现状随手混堆）</text>
+          <circle cx="42" cy="120" r="5" fill="#f85149"/><text x="54" y="124" fill="#e7edf3" font-size="11">空间 中</text>
+          <circle cx="42" cy="140" r="5" fill="#f85149"/><text x="54" y="144" fill="#e7edf3" font-size="11">拆零 低</text>
+          <circle cx="42" cy="160" r="5" fill="#d29922"/><text x="54" y="164" fill="#e7edf3" font-size="11">FIFO 中</text>
+          <circle cx="42" cy="180" r="5" fill="#3fb950"/><text x="54" y="184" fill="#e7edf3" font-size="11">成本 0</text>
+          <text x="115" y="212" fill="#9aa7b4" font-size="10" text-anchor="middle">所需：零</text>
+          <text x="115" y="228" fill="#9aa7b4" font-size="10" text-anchor="middle">（维持现状）</text>
+          <text x="115" y="248" fill="#f85149" font-size="10" text-anchor="middle">不推荐保留</text>
+          <!-- arrow -->
+          <path d="M212 150 L238 150" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar)"/>
+          <!-- B -->
+          <rect x="245" y="45" width="190" height="210" rx="12" fill="#0c150f" stroke="#2ea043"/>
+          <text x="340" y="73" fill="#8ce99a" font-size="13" text-anchor="middle" font-weight="bold">B 库内分区</text>
+          <text x="340" y="93" fill="#9aa7b4" font-size="11" text-anchor="middle">（轻量存拣分离·推荐基线）</text>
+          <circle cx="267" cy="120" r="5" fill="#3fb950"/><text x="279" y="124" fill="#e7edf3" font-size="11">空间 高</text>
+          <circle cx="267" cy="140" r="5" fill="#d29922"/><text x="279" y="144" fill="#e7edf3" font-size="11">拆零 中高</text>
+          <circle cx="267" cy="160" r="5" fill="#3fb950"/><text x="279" y="164" fill="#e7edf3" font-size="11">FIFO 高</text>
+          <circle cx="267" cy="180" r="5" fill="#3fb950"/><text x="279" y="184" fill="#e7edf3" font-size="11">成本 0</text>
+          <text x="340" y="212" fill="#8ce99a" font-size="10" text-anchor="middle">所需：零新增设备</text>
+          <text x="340" y="228" fill="#9aa7b4" font-size="10" text-anchor="middle">货架=拣货区·卡板=存储区</text>
+          <text x="340" y="248" fill="#8ce99a" font-size="10" text-anchor="middle">Wisco/PLBG/PuHuo</text>
+          <!-- arrow -->
+          <path d="M437 150 L463 150" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar)"/>
+          <!-- C -->
+          <rect x="470" y="45" width="190" height="210" rx="12" fill="#1a1d12" stroke="#d29922"/>
+          <text x="565" y="73" fill="#f0c674" font-size="13" text-anchor="middle" font-weight="bold">C 严格存拣+流利架</text>
+          <text x="565" y="93" fill="#9aa7b4" font-size="11" text-anchor="middle">（拣货区流利架物理 FIFO）</text>
+          <circle cx="492" cy="120" r="5" fill="#3fb950"/><text x="504" y="124" fill="#e7edf3" font-size="11">空间 高</text>
+          <circle cx="492" cy="140" r="5" fill="#3fb950"/><text x="504" y="144" fill="#e7edf3" font-size="11">拆零 高</text>
+          <circle cx="492" cy="160" r="5" fill="#3fb950"/><text x="504" y="164" fill="#e7edf3" font-size="11">FIFO 最高</text>
+          <circle cx="492" cy="180" r="5" fill="#f85149"/><text x="504" y="184" fill="#e7edf3" font-size="11">成本 高</text>
+          <text x="565" y="212" fill="#f0c674" font-size="10" text-anchor="middle">所需：添置流利架</text>
+          <text x="565" y="228" fill="#9aa7b4" font-size="10" text-anchor="middle">未来可选·非现在必需</text>
+          <text x="565" y="248" fill="#8ce99a" font-size="10" text-anchor="middle">佳珞裴标杆</text>
+          <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#58a6ff"/></marker></defs>
+        </svg>
+      </div>
+
+      <h3>4.3 4 米层高下的设备约束与落地（用现有两设备）</h3>
+      <p class="lead">不靠高货架、不靠自动化：把普通货架与卡板在 <b>4 米层高</b>内用足即可。下面两张表——左为<b>现有两设备如何落地</b>，右为<b>将来若升级可选项</b>。</p>
+      <table>
+        <tr><th>现有设备</th><th>4 米层高下的用法</th><th>对应 FIFO 角色</th></tr>
+        <tr><td>普通货架</td><td>做 <b>2-3 层拣货层</b>，每层人伸手够到；批次码贴层位</td><td>拣货区（拆零好拣）</td></tr>
+        <tr><td>卡板</td><td>每托约 1.5 米，堆 <b>2-3 托封顶</b>；<b>不码太高太深</b>（既防 FIFO 漏洞、也正好是 4 米物理上限）</td><td>存储区（整托囤货）</td></tr>
+        <tr><td>货架 + 卡板 分工</td><td>拆零走货架拣货区、整托走卡板存储区；货位低了用聚水潭补货单从卡板补到货架</td><td>存拣分离（即 B 方案）</td></tr>
+        <tr><td>不做的</td><td>高层货架 / 驶入式巷道 / 自动化（4 米层高 + 设备成本不划算）</td><td>—</td></tr>
+      </table>
+      <h4 class="sub">将来若升级 · 可选（非现在必需）</h4>
+      <table>
+        <tr><th>选项</th><th>适用</th><th>投入</th></tr>
+        <tr><td>拣货层加地面滚轴流利条</td><td>小件拆零位（不占层高，后入前出物理 FIFO）</td><td>低</td></tr>
+        <tr><td>料箱 Bin 容器化</td><td>混批/慢流，批次记箱上堆叠省地</td><td>低</td></tr>
+        <tr><td>库位顺序编码法</td><td>普货无保质期（地面四号定位，零硬件 FIFO）</td><td>0</td></tr>
+        <tr><td>随机库位 + 强扫码</td><td>系统成熟后（空间利用率最高）</td><td>中</td></tr>
+      </table>
+
+      <h3>4.4 分批上线时间线</h3>
+      <div class="svgbox">
+        <svg viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+          <line x1="40" y1="60" x2="650" y2="60" stroke="#2a3340" stroke-width="3"/>
+          <circle cx="90" cy="60" r="13" fill="#d29922"/><text x="90" y="64" fill="#1a1400" font-size="11" text-anchor="middle" font-weight="bold">0</text>
+          <circle cx="250" cy="60" r="16" fill="#2ea043"/><text x="250" y="65" fill="#04130a" font-size="11" text-anchor="middle" font-weight="bold">①</text>
+          <circle cx="390" cy="60" r="13" fill="#58a6ff"/><text x="390" y="64" fill="#04130a" font-size="11" text-anchor="middle" font-weight="bold">②</text>
+          <circle cx="520" cy="60" r="13" fill="#58a6ff"/><text x="520" y="64" fill="#04130a" font-size="11" text-anchor="middle" font-weight="bold">③</text>
+          <circle cx="630" cy="60" r="13" fill="#3fb950"/><text x="630" y="64" fill="#04130a" font-size="11" text-anchor="middle" font-weight="bold">✓</text>
+          <text x="90" y="92" fill="#9aa7b4" font-size="11" text-anchor="middle">准备·快照</text>
+          <text x="250" y="92" fill="#8ce99a" font-size="11" text-anchor="middle">佳珞裴标杆</text>
+          <text x="390" y="92" fill="#9aa7b4" font-size="11" text-anchor="middle">PLBG回填</text>
+          <text x="520" y="92" fill="#9aa7b4" font-size="11" text-anchor="middle">逐一落实</text>
+          <text x="630" y="92" fill="#8ce99a" font-size="11" text-anchor="middle">验收</text>
+        </svg>
+      </div>
+      <ul>
+        <li><b>阶段 0 准备：</b>批次编码定稿、标签打印、<b>切换前全量导出批次库存快照</b>、开关防护宣导、调拨与奇门批次保留验证。</li>
+        <li><b>① 标杆试点（佳珞裴）：</b>收货建批→上架扫标→拣货系统 FIFO→拆箱重贴，验证拣货批次符合率。</li>
+        <li><b>② PLBG 回填：</b>历史库存用商品盘点一次性盘入批次，首单来货全走批次。</li>
+        <li><b>③ 逐一落实：</b>Wisco / Soyama / Wholesale-1 / PuHuo 按业务重要性铺开，大货仓整批维度批次。</li>
+        <li><b>④ 验收：</b>抽查看最旧批次是否先出、盘盈率、临期先出比例。</li>
+      </ul>
+
+      <h3>4.5 调拨验证清单（本仓范围）</h3>
+      <div class="step"><div class="n">1</div><div class="t">用 1 个 SKU 在测试环境跑通：<b>有批次仓→无批次仓</b>、<b>分仓间调拨</b>，观察批次是否保留、FIFO 是否连续。</div></div>
+      <div class="step"><div class="n">2</div><div class="t">验证<b>暂存位限制</b>：确认调拨不能从暂存位发起，须从"他位"调拨。</div></div>
+      <div class="step"><div class="n">3</div><div class="t">批次丢失兜底：若调拨后批次丢失，确认能否从快照恢复，而非关功能回滚。</div></div>
+
+      <h3>4.6 暂缓项（非阻断，留备忘）</h3>
+      <ul>
+        <li>出库 FIFO/FEFO 配置入口 + 保质期/临期预警/过期拦截（系统支持，当前暂未启用）。</li>
+        <li>批次成本 + FIFO 成本计价 + 退税/关务对接（若采购成本已按批记录且暂不做退税，非文档必补项；将来做退税时批次成本是导出数据源）。</li>
+        <li>退货/破损批次回写：商品上有日期就用商品日期维护批次号。</li>
+      </ul>
+
+    </div>
+  </section>
+
+  <div class="foot">
+    东莞仓 FIFO 可行性方案 · 基于聚水潭生产批次管理 + 飞书 FIFO 实操笔记（revision 1042）<br>
+    层次：🟢 已确认 / 🔴 风险告知 / 🟡 待决策 / ⚪ 支撑细节 · 由 WorkBuddy 生成
+  </div>
+
+</div>
+</body>
+</html>
