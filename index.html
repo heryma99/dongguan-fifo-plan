@@ -308,6 +308,55 @@
         </svg>
       </div>
 
+      <h3>4.2.1 存拣分离运作图示（B 方案核心）</h3>
+      <p class="lead">把"存"和"拣"分到两个物理区：卡板整托囤在 <b>存储区</b>、普通货架拆零放 <b>拣货区</b>，中间用补货单联通。货进存储区 → 补到拣货区 → 从拣货区出，FIFO 的断层被压到最小。</p>
+      <div class="svgbox">
+        <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+          <text x="340" y="18" fill="#e7edf3" font-size="14" text-anchor="middle" font-weight="bold">存拣分离（B 方案）运作示意 · 货从存储区补到拣货区再出库</text>
+          <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#58a6ff"/></marker></defs>
+
+          <!-- 收货 -->
+          <rect x="15" y="60" width="85" height="44" rx="8" fill="#1c2230" stroke="#58a6ff"/>
+          <text x="57" y="87" fill="#e7edf3" font-size="12" text-anchor="middle">收货建批</text>
+          <!-- 收货→存储区 -->
+          <path d="M100 82 L128 82" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar2)"/>
+
+          <!-- 存储区 -->
+          <rect x="130" y="35" width="175" height="150" rx="12" fill="#1a1d12" stroke="#d29922"/>
+          <text x="217" y="56" fill="#f0c674" font-size="12" text-anchor="middle" font-weight="bold">存储区 · 卡板整托</text>
+          <rect x="148" y="70" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <rect x="214" y="70" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <rect x="148" y="98" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <rect x="214" y="98" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <rect x="148" y="126" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <rect x="214" y="126" width="58" height="22" fill="#d29922" opacity=".45"/>
+          <text x="217" y="168" fill="#9aa7b4" font-size="10" text-anchor="middle">高密度整托囤货 · 按批次堆叠</text>
+
+          <!-- 补货 -->
+          <path d="M307 110 L397 110" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar2)"/>
+          <text x="352" y="102" fill="#58a6ff" font-size="10" text-anchor="middle">补货单</text>
+          <text x="352" y="124" fill="#9aa7b4" font-size="10" text-anchor="middle">按最旧批次补</text>
+
+          <!-- 拣货区 -->
+          <rect x="400" y="35" width="175" height="150" rx="12" fill="#0c150f" stroke="#2ea043"/>
+          <text x="487" y="56" fill="#8ce99a" font-size="12" text-anchor="middle" font-weight="bold">拣货区 · 货架拆零</text>
+          <rect x="416" y="70" width="143" height="20" fill="#2ea043" opacity=".3"/>
+          <rect x="416" y="98" width="143" height="20" fill="#2ea043" opacity=".3"/>
+          <rect x="416" y="126" width="143" height="20" fill="#2ea043" opacity=".3"/>
+          <text x="487" y="168" fill="#9aa7b4" font-size="10" text-anchor="middle">按单拆零 · 流动快</text>
+
+          <!-- 拣货区→出库 -->
+          <path d="M575 82 L600 82" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar2)"/>
+          <rect x="600" y="60" width="70" height="44" rx="8" fill="#1c2230" stroke="#3fb950"/>
+          <text x="635" y="87" fill="#e7edf3" font-size="12" text-anchor="middle">出库</text>
+
+          <!-- 底部说明 -->
+          <text x="340" y="225" fill="#e7edf3" font-size="11" text-anchor="middle">FIFO 保证：存储区按批次堆叠 → 补货只补最旧批次 → 拣货区小批量流动，断层面最小</text>
+          <text x="40" y="258" fill="#f85149" font-size="11">✗ 全仓拣货：货位既存又拣，批次散落，FIFO 靠系统但物理乱</text>
+          <text x="40" y="280" fill="#8ce99a" font-size="11">✓ 存拣分离：存归存、拣归拣，补货可控，FIFO 漏洞面最小（即 B 方案）</text>
+        </svg>
+      </div>
+
       <h3>4.3 4 米层高下的设备约束与落地（用现有两设备）</h3>
       <p class="lead">不靠高货架、不靠自动化：把普通货架与卡板在 <b>4 米层高</b>内用足即可。下面两张表——左为<b>现有两设备如何落地</b>，右为<b>将来若升级可选项</b>。</p>
       <table>
