@@ -119,8 +119,8 @@
   <div class="wrap">
     <div class="brand">🧭 东莞仓 FIFO 可行性方案</div>
     <nav class="nav">
-      <a class="r" href="#L1">注意事项</a>
-      <a class="d" href="#L2">待决策</a>
+      <a class="d" href="#L1">待决策</a>
+      <a class="r" href="#L2">注意事项</a>
       <a class="s" href="#L3">已确认</a>
       <a class="z" href="#L4">支撑细节</a>
     </nav>
@@ -142,45 +142,8 @@
     <div class="verdict">✅ <b>结论：可行，无需自研代码。</b> 先拿 <b>佳珞裴-总仓</b> 标杆试点，走顺后逐一落实其余分仓。</div>
   </div>
 
-  <!-- ============ LAYER 1: 风险 ============ -->
-  <section class="layer r" id="L1">
-    <div class="head"><span class="bar"></span><span class="tag">注意事项</span><h2>注意事项（多为过渡期 / 纪律类）</h2></div>
-    <div class="body">
-
-      <h3>分级一览</h3>
-      <div class="lane">
-        <span class="risk m">中 · 历史库存无批次先发破 FIFO（过渡期风险，批次化后消失）</span>
-        <span class="risk m">中 · 开关来回切丢批次数据（纪律：勿来回切）</span>
-        <span class="risk m">中 · 一位多批次回退受限</span>
-        <span class="risk m">中 · 暂存位开关混存须关</span>
-        <span class="risk m">中 · 拣货不扫批次·伪 FIFO 残留</span>
-        <span class="risk m">中 · 编码来源被替换（擅自手编）</span>
-        <span class="risk l">低 · 历史库存回填选错批次=盘盈（商品盘点整仓一次盘入即可避免）</span>
-        <span class="risk l">低 · 去箱后无批次难追溯</span>
-      </div>
-
-      <div class="honest">
-        <b>实话说明（伪 FIFO 残留）：</b>同一库位放不同批次、拣货只扫仓位+SKU 不扫批次 → 系统记扣旧批、拣货员实际可能抓到顶部/最新的。这是"库存漂移/伪 FIFO"本质，但<b>比现在完全没 FIFO 强</b>——至少账面上强制批次顺序。彻底消除需开拣货批次扫码校验（暂未做），当前靠：①旧批放最易取处 ②商品贴批次码肉眼核对 ③同库位尽量单批次 ④卡板不码太高太深 ⑤定期盘点发现漂移。
-      </div>
-
-      <h3>防护要点（对照表）</h3>
-      <table>
-        <tr><th>注意事项</th><th>等级</th><th>核心防护</th></tr>
-        <tr><td>历史库存无批次先发破 FIFO</td><td>中</td><td>过渡期风险：旧库存尽快批次化、与新批次分区存放（新入库强制批次，非风险）</td></tr>
-        <tr><td>开关来回切丢数据</td><td>中</td><td>上线后严禁来回切；切前全量导出快照（开了不关）</td></tr>
-        <tr><td>一位多批次回退</td><td>中</td><td>上线初期统一决策，不轻易切换一位/多位模式</td></tr>
-        <tr><td>暂存位开关</td><td>中</td><td>混存阶段关、全批次化后开</td></tr>
-        <tr><td>拣货不扫·伪 FIFO</td><td>中</td><td>摆放纪律+贴码+盘点（见实话说明）</td></tr>
-        <tr><td>编码来源被替换</td><td>中</td><td>禁止手编/加后缀，以供应商标签为准扫描</td></tr>
-        <tr><td>回填选错批次</td><td>低</td><td>用「商品盘点」把整个仓位一次性盘入（不分次），选已有批次</td></tr>
-        <tr><td>去箱后无批次</td><td>低</td><td>外箱+内盒都贴；拆箱重贴；系统记"箱=批次"按箱追溯</td></tr>
-      </table>
-
-    </div>
-  </section>
-
-  <!-- ============ LAYER 2: 待决策 ============ -->
-  <section class="layer d" id="L2">
+  <!-- ============ LAYER 1: 待决策 ============ -->
+  <section class="layer d" id="L1">
     <div class="head"><span class="bar"></span><span class="tag">待决策</span><h2>待决策（业务侧 / 执行侧确认）</h2></div>
     <div class="body">
       <p class="lead">经梳理：本方案落地以流程/软件为主、<b>先利旧、无新增预算、无组织调整</b>。以下为待确认项；其中 <b>D0 预约送货去留</b>是唯一可能需领导拍板的卡点（涉及停用一个在用功能），其余由业务/运营侧定即可。</p>
@@ -226,6 +189,43 @@
         <div class="q">D4 · 贴码分工</div>
         <div class="imp">新货由<b>供应商贴批次号</b>，库内旧库存由<b>仓库贴批次号</b>。批次码规则：<code>YYYYMMDD</code>（建议）。</div>
       </div>
+
+    </div>
+  </section>
+
+  <!-- ============ LAYER 2: 注意事项 ============ -->
+  <section class="layer r" id="L2">
+    <div class="head"><span class="bar"></span><span class="tag">注意事项</span><h2>注意事项（多为过渡期 / 纪律类）</h2></div>
+    <div class="body">
+
+      <h3>分级一览</h3>
+      <div class="lane">
+        <span class="risk m">中 · 历史库存无批次先发破 FIFO（过渡期风险，批次化后消失）</span>
+        <span class="risk m">中 · 开关来回切丢批次数据（纪律：勿来回切）</span>
+        <span class="risk m">中 · 一位多批次回退受限</span>
+        <span class="risk m">中 · 暂存位开关混存须关</span>
+        <span class="risk m">中 · 拣货不扫批次·伪 FIFO 残留</span>
+        <span class="risk m">中 · 编码来源被替换（擅自手编）</span>
+        <span class="risk l">低 · 历史库存回填选错批次=盘盈（商品盘点整仓一次盘入即可避免）</span>
+        <span class="risk l">低 · 去箱后无批次难追溯</span>
+      </div>
+
+      <div class="honest">
+        <b>实话说明（伪 FIFO 残留）：</b>同一库位放不同批次、拣货只扫仓位+SKU 不扫批次 → 系统记扣旧批、拣货员实际可能抓到顶部/最新的。这是"库存漂移/伪 FIFO"本质，但<b>比现在完全没 FIFO 强</b>——至少账面上强制批次顺序。彻底消除需开拣货批次扫码校验（暂未做），当前靠：①旧批放最易取处 ②商品贴批次码肉眼核对 ③同库位尽量单批次 ④卡板不码太高太深 ⑤定期盘点发现漂移。
+      </div>
+
+      <h3>防护要点（对照表）</h3>
+      <table>
+        <tr><th>注意事项</th><th>等级</th><th>核心防护</th></tr>
+        <tr><td>历史库存无批次先发破 FIFO</td><td>中</td><td>过渡期风险：旧库存尽快批次化、与新批次分区存放（新入库强制批次，非风险）</td></tr>
+        <tr><td>开关来回切丢数据</td><td>中</td><td>上线后严禁来回切；切前全量导出快照（开了不关）</td></tr>
+        <tr><td>一位多批次回退</td><td>中</td><td>上线初期统一决策，不轻易切换一位/多位模式</td></tr>
+        <tr><td>暂存位开关</td><td>中</td><td>混存阶段关、全批次化后开</td></tr>
+        <tr><td>拣货不扫·伪 FIFO</td><td>中</td><td>摆放纪律+贴码+盘点（见实话说明）</td></tr>
+        <tr><td>编码来源被替换</td><td>中</td><td>禁止手编/加后缀，以供应商标签为准扫描</td></tr>
+        <tr><td>回填选错批次</td><td>低</td><td>用「商品盘点」把整个仓位一次性盘入（不分次），选已有批次</td></tr>
+        <tr><td>去箱后无批次</td><td>低</td><td>外箱+内盒都贴；拆箱重贴；系统记"箱=批次"按箱追溯</td></tr>
+      </table>
 
     </div>
   </section>
