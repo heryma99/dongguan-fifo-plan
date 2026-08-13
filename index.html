@@ -117,8 +117,8 @@
     <h1>东莞仓 FIFO（先进先出）可行性方案</h1>
     <div class="sub">聚水潭「生产批次管理」落地 · 6 个分仓 · 基于飞书 FIFO 实操笔记（revision 1042）</div>
     <div class="statbar">
-      <div class="stat r"><span class="n">2</span> 条 P0 不可上线红线 · 8 项风险</div>
-      <div class="stat d"><span class="n">4</span> 项业务侧待决策</div>
+      <div class="stat r"><span class="n">1</span> 条 P0 红线 · 8 项风险</div>
+      <div class="stat d"><span class="n">5</span> 项业务侧待决策（含 1 个卡点 D0）</div>
       <div class="stat s"><span class="n">10</span> 项已确认事实</div>
     </div>
     <div class="verdict">
@@ -132,13 +132,7 @@
     <div class="body">
 
       <div class="p0">
-        <div class="ttl">🔴 P0 红线① · 预约送货与生产批次硬冲突</div>
-        <div>开启生产批次管理后，现有「供应商预约送货」功能直接报错 <code>错误！该业务不支持生产批次流程！</code>（已提需求 R159775，会不会做未知）。<b>PLBG 仓重度依赖预约送货，替代入库路径未落地前，该仓 FIFO 优先级降级。</b></div>
-        <div class="imp" style="color:var(--mut);font-size:13px;margin-top:6px">防护：试点仓先用非预约来货（首单/采购）验证，再回填预约送货场景；PLBG 仓需先确定替代入库路径。</div>
-      </div>
-
-      <div class="p0">
-        <div class="ttl">🔴 P0 红线② · 开关来回切丢数据</div>
+        <div class="ttl">🔴 P0 红线 · 开关来回切丢数据</div>
         <div>开启生产批次管理后关闭再打开，<b>原有生产批次信息一部分会丢失</b>。属真问题。</div>
         <div class="imp" style="color:var(--mut);font-size:13px;margin-top:6px">防护：① 切换前全量导出批次库存快照；② 上线后严禁来回切开关；③ 出问题靠数据恢复而非关功能（因"开了不能关"，回滚=快照恢复）。</div>
       </div>
@@ -177,7 +171,16 @@
   <section class="layer d" id="L2">
     <div class="head"><span class="tag">DECISION</span><h2>第二层 · 待决策（业务侧 / 执行侧确认）</h2></div>
     <div class="body">
-      <p class="lead">经梳理：本方案落地以流程/软件为主、<b>先利旧、无新增预算、无组织调整</b>，<b>真正需领导拍板的卡点为 0</b>。以下为运营/业务侧待确认项，由你定即可，不必上报领导。</p>
+      <p class="lead">经梳理：本方案落地以流程/软件为主、<b>先利旧、无新增预算、无组织调整</b>。以下为待确认项；其中 <b>D0 预约送货去留</b>是唯一可能需领导拍板的卡点（涉及停用一个在用功能），其余由业务/运营侧定即可。</p>
+
+      <div class="dec" style="border-left-color:var(--bad)">
+        <div class="q" style="color:#ff9a93">D0 · 预约送货去留（PLBG 仓上线卡点 · 二选一）</div>
+        <div class="opt">
+          <span class="pill">① 等聚水潭解决 R159775（时间不定）</span>
+          <span class="pill">② 取消预约送货，改走其他入库路径</span>
+        </div>
+        <div class="imp">开启生产批次管理后，现有「供应商预约送货」直接报错 <code>该业务不支持生产批次流程！</code>。这不是可防护的风险，是<b>确定性卡点</b>：要么聚水潭修好，要么停用预约送货——<b>二选一</b>，才能让重度依赖预约送货的 <b>PLBG 仓</b>上 FIFO；其余分仓不依赖预约送货，不受此卡点阻塞。因涉及停用一个在用功能，此卡点可能需领导拍板。</div>
+      </div>
 
       <div class="dec">
         <div class="q">D1 · 存储选型策略（在现有条件下怎么摆）</div>
@@ -253,7 +256,7 @@
           <div class="role">国内小包 · ~100 单/天 · 全业务场景</div>
           <div class="pos">定位：标杆 · 先用现有货架+卡板做库内分区（B）；跑顺后拣货层可加流利条升级（C，未来可选）</div>
         </div>
-        <div class="wh"><h4>② PLBG 仓</h4><div class="role">历史库存 + 首单来货</div><div class="pos">定位：后续 · 历史货用商品盘点回填；首单走批次；受预约送货冲突影响优先级降级</div></div>
+        <div class="wh"><h4>② PLBG 仓</h4><div class="role">历史库存 + 首单来货</div><div class="pos">定位：后续 · 历史货用商品盘点回填；首单走批次；受预约送货卡点阻塞，优先级降级</div></div>
         <div class="wh"><h4>③ Soyama 仓</h4><div class="role">FBA 备货 · 大货整批出</div><div class="pos">定位：后续 · 整批维度做批次，卡板存储为主</div></div>
         <div class="wh"><h4>④ Wholesale-1</h4><div class="role">传统贸易大货 · 多客户 SKU</div><div class="pos">定位：后续 · 商品本体须贴含客户识别码 SKU（不能只贴外箱）</div>
           <div class="pin" style="margin-top:8px">⚠ 贴码硬约束：库存多、周转慢，外箱破损后只贴外箱将发错客户；本体可识别是防串货最后防线。</div>
