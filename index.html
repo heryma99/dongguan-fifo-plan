@@ -174,12 +174,12 @@
       <p class="lead">经梳理：本方案落地以流程/软件为主、<b>先利旧、无新增预算、无组织调整</b>。以下为待确认项；其中 <b>D0 预约送货去留</b>是唯一可能需领导拍板的卡点（涉及停用一个在用功能），其余由业务/运营侧定即可。</p>
 
       <div class="dec" style="border-left-color:var(--bad)">
-        <div class="q" style="color:#ff9a93">D0 · 预约送货去留（PLBG 仓上线卡点 · 二选一）</div>
+        <div class="q" style="color:#ff9a93">D0 · 预约送货去留（全局卡点 · 所有分仓 · 二选一）</div>
         <div class="opt">
           <span class="pill">① 等聚水潭解决 R159775（时间不定）</span>
-          <span class="pill">② 取消预约送货，改走其他入库路径</span>
+          <span class="pill">② 取消预约送货，改走按箱入库 / 普通收货</span>
         </div>
-        <div class="imp">开启生产批次管理后，现有「供应商预约送货」直接报错 <code>该业务不支持生产批次流程！</code>。这不是可防护的风险，是<b>确定性卡点</b>：要么聚水潭修好，要么停用预约送货——<b>二选一</b>，才能让重度依赖预约送货的 <b>PLBG 仓</b>上 FIFO；其余分仓不依赖预约送货，不受此卡点阻塞。因涉及停用一个在用功能，此卡点可能需领导拍板。</div>
+        <div class="imp">开启生产批次管理后，现有「供应商预约送货」功能<b>全局报错</b> <code>该业务不支持生产批次流程！</code>——这是系统层面冲突，<b>不分仓</b>，任何分仓只要走预约送货入库都会被卡。<b>PLBG 仓重度依赖预约送货，受影响最重</b>；其余分仓若也用预约送货同样被卡。这不是可防护的风险，是<b>确定性卡点</b>：要么聚水潭修好 R159775，要么停用预约送货、改走按箱入库/普通收货——<b>二选一</b>，且须在试点仓上线前先定。因涉及停用一个在用功能，此卡点可能需领导拍板。</div>
       </div>
 
       <div class="dec">
@@ -256,7 +256,7 @@
           <div class="role">国内小包 · ~100 单/天 · 全业务场景</div>
           <div class="pos">定位：标杆 · 先用现有货架+卡板做库内分区（B）；跑顺后拣货层可加流利条升级（C，未来可选）</div>
         </div>
-        <div class="wh"><h4>② PLBG 仓</h4><div class="role">历史库存 + 首单来货</div><div class="pos">定位：后续 · 历史货用商品盘点回填；首单走批次；受预约送货卡点阻塞，优先级降级</div></div>
+        <div class="wh"><h4>② PLBG 仓</h4><div class="role">历史库存 + 首单来货</div><div class="pos">定位：后续 · 历史货用商品盘点回填；首单走批次；重度依赖预约送货，受全局卡点影响最重</div></div>
         <div class="wh"><h4>③ Soyama 仓</h4><div class="role">FBA 备货 · 大货整批出</div><div class="pos">定位：后续 · 整批维度做批次，卡板存储为主</div></div>
         <div class="wh"><h4>④ Wholesale-1</h4><div class="role">传统贸易大货 · 多客户 SKU</div><div class="pos">定位：后续 · 商品本体须贴含客户识别码 SKU（不能只贴外箱）</div>
           <div class="pin" style="margin-top:8px">⚠ 贴码硬约束：库存多、周转慢，外箱破损后只贴外箱将发错客户；本体可识别是防串货最后防线。</div>
