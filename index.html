@@ -158,12 +158,8 @@
       </div>
 
       <div class="dec">
-        <div class="q">D1 · 存储选型策略（在现有条件下怎么摆）</div>
-        <div class="opt">
-          <span class="pill rec">佳珞裴-总仓 / Wisco：严格存拣分离（拣货区 + 存储区）</span>
-          <span class="pill rec">Soyama / Wholesale-1 / PLBG / PuHuo：轻量存拣分离（库内分区）</span>
-        </div>
-        <div class="imp">建议默认如上：不做"全仓统一改存拣分离"，按分仓画像选型。层高有限，先走流程/软件固化，硬件（流利架/层板货架）等标杆跑顺再上。</div>
+        <div class="q">D1 · 贴码分工</div>
+        <div class="imp">新货由<b>供应商贴批次号</b>，库内旧库存由<b>仓库贴批次号</b>。批次码规则：<code>YYYYMMDD</code>（建议）。</div>
       </div>
 
       <div class="dec">
@@ -186,8 +182,12 @@
       </div>
 
       <div class="dec">
-        <div class="q">D4 · 贴码分工</div>
-        <div class="imp">新货由<b>供应商贴批次号</b>，库内旧库存由<b>仓库贴批次号</b>。批次码规则：<code>YYYYMMDD</code>（建议）。</div>
+        <div class="q">D4 · 存储选型策略（在现有条件下怎么摆）</div>
+        <div class="opt">
+          <span class="pill rec">佳珞裴-总仓 / Wisco：严格存拣分离（拣货区 + 存储区）</span>
+          <span class="pill rec">Soyama / Wholesale-1 / PLBG / PuHuo：轻量存拣分离（库内分区）</span>
+        </div>
+        <div class="imp">建议默认如上：不做"全仓统一改存拣分离"，按分仓画像选型。层高有限，先走流程/软件固化，硬件（流利架/层板货架）等标杆跑顺再上。</div>
       </div>
 
     </div>
@@ -239,7 +239,7 @@
         <div class="fi"><span class="ico">🛠️</span><div><span class="tt">能力底座</span><p>生产批次管理 = FIFO 实现层，覆盖 6 分仓，无需自研代码</p></div></div>
         <div class="fi"><span class="ico">🔄</span><div><span class="tt">数据流</span><p>供应商贴标 → 收货建批 → 上架带出 → 拣货按最旧批次出；<b>拣货不扫批次</b>，靠系统保证</p></div></div>
         <div class="fi"><span class="ico">📱</span><div><span class="tt">扫码带出</span><p>批次先维护，扫外箱批次标即自动带出、取消手选</p></div></div>
-        <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>批次码<b>日期或非日期均可</b>，不自编不加后缀；须<b>在系统中先维护、标准统一</b>——一位一批次做不到时，拣货肉眼识别不了批次，全靠系统指派</p><p class="warn">⚠️ 贴码分工：新货供应商贴、库内仓库贴（见 D4）</p></div></div>
+        <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>批次码<b>日期或非日期均可</b>，不自编不加后缀；须<b>在系统中先维护、标准统一</b>——一位一批次做不到时，拣货肉眼识别不了批次，全靠系统指派</p><p class="warn">⚠️ 贴码分工：新货供应商贴、库内仓库贴（见 D1）</p></div></div>
         <div class="fi"><span class="ico">🔖</span><div><span class="tt">贴码规则</span><p>外箱与产品盒都贴，<b>外箱标 = 产品标</b>；贴 SKU <b>同一面的左右角</b>，方便入库上架扫码</p></div></div>
         <div class="fi"><span class="ico">⚖️</span><div><span class="tt">按批次 FIFO</span><p>全维护批次后按批次 FIFO；混有/无批次先推无批次（库位从小到大）</p></div></div>
         <div class="fi"><span class="ico">🗂️</span><div><span class="tt">存货区简化</span><p>开启后可设<b>存储区 / 拣货区</b>，是存拣分离的平台入口</p></div></div>
