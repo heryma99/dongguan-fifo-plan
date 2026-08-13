@@ -219,7 +219,7 @@
           <span class="pill">保证期是否强制维护</span>
           <span class="pill">商品贴日期是否影响客户体验</span>
         </div>
-        <div class="imp">建议：食品/化妆品/电池强制维护保证期，普货留空=长期；内部批次码贴内盒封口/外箱不显眼处，不影响体验。批次码来源（工厂预印 vs 仓库贴）已定=以供应商贴标为准，其落地属跨部门协调，单列 D4，不在此选型。</div>
+        <div class="imp">建议：食品/化妆品/电池强制维护保证期，普货留空=长期。</div>
       </div>
 
       <div class="dec">
@@ -245,7 +245,7 @@
         <div class="fi"><span class="ico">🔄</span><div><span class="tt">数据流</span><p>供应商贴标 → 收货建批 → 上架带出 → 拣货按最旧批次出；<b>拣货不扫批次</b>，靠系统保证</p></div></div>
         <div class="fi"><span class="ico">📱</span><div><span class="tt">扫码带出</span><p>批次先维护，扫外箱批次标即自动带出、取消手选</p></div></div>
         <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>以供应商贴标为准，严格 8 位 <code>YYYYMMDD</code>，不自编不加后缀</p><p class="warn">⚠️ 前提供应商配合贴码（跨部门协调，见 D4）</p></div></div>
-        <div class="fi"><span class="ico">🔖</span><div><span class="tt">贴码规则</span><p>外箱与产品盒都贴，且<b>外箱标 = 产品标</b>（防内外错配）</p></div></div>
+        <div class="fi"><span class="ico">🔖</span><div><span class="tt">贴码规则</span><p>外箱与产品盒都贴，<b>外箱标 = 产品标</b>；贴 SKU <b>同一面的左右角</b>，方便入库上架扫码</p></div></div>
         <div class="fi"><span class="ico">⚖️</span><div><span class="tt">按批次 FIFO</span><p>全维护批次后按批次 FIFO；混有/无批次先推无批次（库位从小到大）</p></div></div>
         <div class="fi"><span class="ico">🗂️</span><div><span class="tt">存货区简化</span><p>开启后可设<b>存储区 / 拣货区</b>，是存拣分离的平台入口</p></div></div>
         <div class="fi"><span class="ico">🚚</span><div><span class="tt">调拨约束</span><p>不从暂存位发起，从仓位调拨；<b>佳珞裴→百世云仓</b>需重点验证（云仓 FIFO 由云仓自管）</p></div></div>
