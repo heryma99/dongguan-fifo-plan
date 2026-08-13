@@ -223,13 +223,8 @@
       </div>
 
       <div class="dec">
-        <div class="q">D4 · 供应商贴标协调</div>
-        <div class="opt">
-          <span class="pill">① 纳入供应商准入 / 采购协议条款</span>
-          <span class="pill">② 先头部供应商试点沟通模板</span>
-          <span class="pill">③ 暂不推，仓库收货台兜底打印</span>
-        </div>
-        <div class="imp">FIFO 数据流源头在供应商，仓库无法强制。"让供应商贴批次码"能否落地、快慢如何，取决于采购/供应链何时把它变成供应商交付要求。属<b>跨部门协调事项</b>；过渡期由仓库收货台现场打印贴标兜底（见④脚注）。</div>
+        <div class="q">D4 · 贴码分工</div>
+        <div class="imp">新货由<b>供应商贴批次号</b>，库内旧库存由<b>仓库贴批次号</b>。</div>
       </div>
 
     </div>
@@ -244,7 +239,7 @@
         <div class="fi"><span class="ico">🛠️</span><div><span class="tt">能力底座</span><p>生产批次管理 = FIFO 实现层，覆盖 6 分仓，无需自研代码</p></div></div>
         <div class="fi"><span class="ico">🔄</span><div><span class="tt">数据流</span><p>供应商贴标 → 收货建批 → 上架带出 → 拣货按最旧批次出；<b>拣货不扫批次</b>，靠系统保证</p></div></div>
         <div class="fi"><span class="ico">📱</span><div><span class="tt">扫码带出</span><p>批次先维护，扫外箱批次标即自动带出、取消手选</p></div></div>
-        <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>批次码<b>日期或非日期均可</b>，以供应商贴标为准，不自编不加后缀；须<b>在系统中先维护、标准统一</b>——一位一批次做不到时，拣货肉眼识别不了批次，全靠系统指派</p><p class="warn">⚠️ 前提供应商配合贴码（跨部门协调，见 D4）</p></div></div>
+        <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>批次码<b>日期或非日期均可</b>，不自编不加后缀；须<b>在系统中先维护、标准统一</b>——一位一批次做不到时，拣货肉眼识别不了批次，全靠系统指派</p><p class="warn">⚠️ 贴码分工：新货供应商贴、库内仓库贴（见 D4）</p></div></div>
         <div class="fi"><span class="ico">🔖</span><div><span class="tt">贴码规则</span><p>外箱与产品盒都贴，<b>外箱标 = 产品标</b>；贴 SKU <b>同一面的左右角</b>，方便入库上架扫码</p></div></div>
         <div class="fi"><span class="ico">⚖️</span><div><span class="tt">按批次 FIFO</span><p>全维护批次后按批次 FIFO；混有/无批次先推无批次（库位从小到大）</p></div></div>
         <div class="fi"><span class="ico">🗂️</span><div><span class="tt">存货区简化</span><p>开启后可设<b>存储区 / 拣货区</b>，是存拣分离的平台入口</p></div></div>
