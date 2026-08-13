@@ -117,7 +117,7 @@
     <h1>东莞仓 FIFO（先进先出）可行性方案</h1>
     <div class="sub">聚水潭「生产批次管理」落地 · 6 个分仓 · 基于飞书 FIFO 实操笔记（revision 1042）</div>
     <div class="statbar">
-      <div class="stat r"><span class="n">1</span> 条 P0 红线 · 8 项风险</div>
+      <div class="stat r"><span class="n">8</span> 项风险（无 P0 红线 · 多为过渡期/纪律类）</div>
       <div class="stat d"><span class="n">5</span> 项业务侧待决策（含 1 个卡点 D0）</div>
       <div class="stat s"><span class="n">10</span> 项已确认事实</div>
     </div>
@@ -128,18 +128,13 @@
 
   <!-- ============ LAYER 1: 风险 ============ -->
   <section class="layer r" id="L1">
-    <div class="head"><span class="tag">RISK</span><h2>第一层 · 风险告知（上线前必读）</h2></div>
+    <div class="head"><span class="tag">RISK</span><h2>第一层 · 风险与注意事项（多为过渡期 / 纪律类）</h2></div>
     <div class="body">
-
-      <div class="p0">
-        <div class="ttl">🔴 P0 红线 · 开关来回切丢数据</div>
-        <div>开启生产批次管理后关闭再打开，<b>原有生产批次信息一部分会丢失</b>。属真问题。</div>
-        <div class="imp" style="color:var(--mut);font-size:13px;margin-top:6px">防护：① 切换前全量导出批次库存快照；② 上线后严禁来回切开关；③ 出问题靠数据恢复而非关功能（因"开了不能关"，回滚=快照恢复）。</div>
-      </div>
 
       <h3>风险分级一览</h3>
       <div class="lane">
-        <span class="risk h">高 · 无批次先发破 FIFO（跨仓同仓都先推无批次）</span>
+        <span class="risk m">中 · 历史库存无批次先发破 FIFO（过渡期风险，批次化后消失）</span>
+        <span class="risk m">中 · 开关来回切丢批次数据（纪律：勿来回切）</span>
         <span class="risk m">中 · 一位多批次回退受限</span>
         <span class="risk m">中 · 暂存位开关混存须关</span>
         <span class="risk m">中 · 拣货不扫批次·伪 FIFO 残留</span>
@@ -155,7 +150,8 @@
       <h3>防护要点（对照表）</h3>
       <table>
         <tr><th>风险</th><th>等级</th><th>核心防护</th></tr>
-        <tr><td>无批次先发破 FIFO</td><td>高</td><td>无批次与新批次严格分区存放（跨仓同仓都不混）</td></tr>
+        <tr><td>历史库存无批次先发破 FIFO</td><td>中</td><td>过渡期风险：旧库存尽快批次化、与新批次分区存放（新入库强制批次，非风险）</td></tr>
+        <tr><td>开关来回切丢数据</td><td>中</td><td>上线后严禁来回切；切前全量导出快照（开了不关）</td></tr>
         <tr><td>一位多批次回退</td><td>中</td><td>上线初期统一决策，不轻易切换一位/多位模式</td></tr>
         <tr><td>暂存位开关</td><td>中</td><td>混存阶段关、全批次化后开</td></tr>
         <tr><td>拣货不扫·伪 FIFO</td><td>中</td><td>摆放纪律+贴码+盘点（见实话说明）</td></tr>
