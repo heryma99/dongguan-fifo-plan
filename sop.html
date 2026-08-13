@@ -143,9 +143,23 @@
     </div>
   </section>
 
-  <!-- 05 参数管理员 -->
+  <!-- 05 调拨员 -->
   <section class="job">
-    <div class="jhead"><span class="num" style="background:var(--badbg);color:var(--bad)">05</span><h2>参数管理员 · 开关 / 参数</h2><span class="role">开关错了会丢数据，高危</span></div>
+    <div class="jhead"><span class="num" style="background:var(--blu-bg);color:var(--blu)">05</span><h2>调拨员 · 仓位间调拨</h2><span class="role">跨仓流转，注意批次保留</span></div>
+    <div class="jbody">
+      <div class="row"><b>标准动作</b><p>从仓位（非暂存位）调拨到对应分仓；<b>不支持从暂存位发起</b>。</p></div>
+      <div class="row"><b class="rule">铁律</b><p>特别注意 <b>佳珞裴总仓 → 百世云仓</b>的操作，重点验证批次是否保留、FIFO 是否连续。</p></div>
+      <div class="row"><b class="warn">异常怎么纠</b><p>调拨后批次丢失 → 确认能否从快照恢复，而非关功能回滚。</p></div>
+      <div class="imgs">
+        <div class="fig"><img src="sop_web/diaobo.jpg" alt="跨仓调拨界面"><div class="cap">跨仓调拨界面</div></div>
+        <div class="fig"><img src="sop_web/diaobo_err.jpg" alt="调拨报错"><div class="cap">调拨从暂存位发起会报错</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 参数管理员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--badbg);color:var(--bad)">06</span><h2>参数管理员 · 开关 / 参数</h2><span class="role">开关错了会丢数据，高危</span></div>
     <div class="jbody">
       <div class="row"><b>标准动作</b><p>暂存位生产批次开关：<b>混存阶段关、全批次化后开</b>；存货区简化流程：开启后在仓位设<b>存储区 / 拣货区</b>。</p></div>
       <div class="row"><b class="rule">铁律</b><p>生产批次开关<b>严禁来回切</b>（丢数据）；一位多批次改回一位一批次，须先把所有一位多批次移成一位一批次。</p></div>
