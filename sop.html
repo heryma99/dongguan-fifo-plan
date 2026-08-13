@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>东莞仓 FIFO · 人员操作 SOP</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c2230; --ink:#e7edf3; --mut:#9aa7b4;
+    --line:#2a3340; --ok:#3fb950; --okbg:#10331b; --warn:#d29922; --warnbg:#33280a;
+    --bad:#f85149; --badbg:#3a1518; --yel:#e3b341; --yelbg:#332b0a; --gr:#2ea043;
+    --blu:#58a6ff; --blu-bg:#0d2138; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;font-size:15px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 18px 80px}
+  a{color:var(--blu);text-decoration:none}
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(14,17,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0}
+  .topbar .wrap{padding:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{font-weight:700;font-size:15px;white-space:nowrap}
+  .back{margin-left:auto;font-size:13px;padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel)}
+  /* hero */
+  .hero{padding:30px 0 6px}
+  .hero h1{font-size:26px;margin:0 0 6px}
+  .hero .sub{color:var(--mut);font-size:14px;margin-bottom:14px}
+  .koutou{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .koutou span{font-size:13px;padding:5px 12px;border-radius:18px;background:var(--okbg);border:1px solid #13361c;color:var(--ok);font-weight:600}
+  /* job card */
+  .job{margin-top:26px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .job .jhead{padding:14px 20px;display:flex;align-items:center;gap:12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .job .jhead .num{flex:0 0 34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+  .job .jhead h2{margin:0;font-size:18px}
+  .job .jhead .role{font-size:12px;color:var(--mut);margin-left:auto}
+  .job .jbody{padding:18px 20px;background:var(--panel)}
+  .row{margin:0 0 14px}
+  .row b{display:block;font-size:13px;color:var(--blu);margin-bottom:3px;letter-spacing:.5px}
+  .row b.rule{color:var(--ok)}
+  .row b.warn{color:var(--bad)}
+  .row p{margin:0;font-size:14px}
+  .imgs{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .fig{flex:1;min-width:150px;max-width:260px}
+  .fig img{width:100%;border-radius:10px;border:1px solid var(--line);background:#0c1118;display:block}
+  .fig.h img{max-height:180px;object-fit:cover;object-position:top}
+  .fig .cap{font-size:12px;color:var(--mut);margin-top:6px;text-align:center}
+  .fig.wide{max-width:100%;flex:1 1 100%}
+  .fig.wide img{max-height:240px;object-fit:contain;background:#0c1118}
+  /* two-col */
+  .cols{display:flex;gap:22px;flex-wrap:wrap}
+  .cols .txt{flex:1;min-width:280px}
+  .cols .side{flex:0 0 220px}
+  .side img{width:100%;border-radius:10px;border:1px solid var(--line);background:#0c1118}
+  .side .cap{font-size:12px;color:var(--mut);margin-top:6px;text-align:center}
+  /* extra section */
+  .extra{margin-top:26px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .extra .ehead{padding:14px 20px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700}
+  .extra .ebody{padding:18px 20px;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:#cdd9e5}
+  code{background:#0c1118;padding:1px 6px;border-radius:5px;color:#9be7c4;font-size:12.5px}
+  .foot{margin-top:36px;color:var(--mut);font-size:12px;text-align:center;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">📋 东莞仓 FIFO · 人员操作 SOP</div>
+    <a class="back" href="./">← 返回 FIFO 可行性方案</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>人员操作 SOP（配图版）</h1>
+    <div class="sub">FIFO 命门在录入端，靠 5 个岗位的扫码纪律锁死。截图均取自飞书 FIFO 实操笔记（revision 1042）。</div>
+    <div class="koutou">
+      <span>只扫不手编（批次号）</span>
+      <span>跟着系统走（拣货不扫批次）</span>
+      <span>开关不来回切</span>
+    </div>
+  </div>
+
+  <!-- 01 收货员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--blu-bg);color:var(--blu)">01</span><h2>收货员 · 入库建批</h2><span class="role">源头录得准，FIFO 才成立</span></div>
+    <div class="jbody">
+      <div class="cols">
+        <div class="txt">
+          <div class="row"><b>标准动作</b><p>扫外箱生产批次标 → 系统按「生产批次号模式」建批入库（见右图入库点数界面）。</p></div>
+          <div class="row"><b class="rule">铁律</b><p>外箱标 = 产品标；只扫日期 <code>YYYYMMDD</code>，<b>不自编、不加后缀、不用系统流水号</b>。</p></div>
+          <div class="row"><b class="warn">异常怎么纠</b><p>标签破损 / 扫不出 → 找主管核对供应商日期，收货台补打印，<b>禁止手编</b>。</p></div>
+        </div>
+        <div class="side"><img src="sop_web/shouhuo.jpg" alt="入库点数界面"><div class="cap">入库点数界面（生产批次号模式）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 上架员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--yelbg);color:var(--yel)">02</span><h2>上架员 · 上架带出批次</h2><span class="role">批次先在系统维护，扫码自动带出</span></div>
+    <div class="jbody">
+      <div class="row"><b>标准动作</b><p>扫商品码 → 扫仓位 → 扫批次标，批次<b>自动带出</b>（取消手选，解「上架还要选批次」痛点）。</p></div>
+      <div class="row"><b class="rule">铁律</b><p>同仓位尽量单批次；卡板<b>不码太高太深</b>，旧批次放最易取层。</p></div>
+      <div class="row"><b class="warn">异常怎么纠</b><p>批次带不出（说明该批次未在系统维护）→ 先建批再上架，不空着跳过。</p></div>
+      <div class="imgs">
+        <div class="fig"><img src="sop_web/shangjia_anxiang.jpg" alt="按箱上架"><div class="cap">按箱上架</div></div>
+        <div class="fig"><img src="sop_web/xiajia.jpg" alt="下架"><div class="cap">下架（带批次）</div></div>
+        <div class="fig"><img src="sop_web/yihuo.jpg" alt="移货"><div class="cap">移货（移出/移入位带批次）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 拣货员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--okbg);color:var(--ok)">03</span><h2>拣货员 · 按系统指派拣</h2><span class="role">系统自动指派最旧批次，无需扫批次</span></div>
+    <div class="jbody">
+      <div class="cols">
+        <div class="txt">
+          <div class="row"><b>标准动作</b><p>按 PDA 指派「仓位 + SKU」拣货，系统按该仓位该 SKU 的批次记录<b>自动指派最旧批次（FIFO）</b>。</p></div>
+          <div class="row"><b class="rule">铁律</b><p>拣货<b>不扫批次</b>，跟系统走；同进有/无批次时，先拣无批次、库位从小到大。</p></div>
+          <div class="row"><b class="warn">异常怎么纠</b><p>仓位没货 → 点「没有拣到货，跳过当前仓位」，<b>不自行换批次</b>。</p></div>
+        </div>
+        <div class="side"><img src="sop_web/jianhuo.jpg" alt="拣货任务界面"><div class="cap">拣货任务界面（系统指派批次）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 盘点员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--warnbg);color:var(--warn)">04</span><h2>盘点员 · 回填 / 校准批次</h2><span class="role">旧库存批次化 + 校准，最容易选错</span></div>
+    <div class="jbody">
+      <div class="row"><b>标准动作</b><p>无批次旧库存 →「商品盘点」<b>一次性</b>盘入该仓位 SKU 批次；有批次 →「商品单品盘点」选<b>已有批次</b>。</p></div>
+      <div class="row"><b class="rule">铁律</b><p>选错批次 = 盘盈；<b>必须选已有批次，不新建</b>。旧库存一个仓位一次盘完，不分次。</p></div>
+      <div class="row"><b class="warn">异常怎么纠</b><p>分次盘会导致批次散落 → 退回重盘，一次性盘完整仓位。</p></div>
+      <div class="imgs">
+        <div class="fig"><img src="sop_web/pandian_sp.jpg" alt="商品盘点入口"><div class="cap">① 商品盘点（无批次旧库存）</div></div>
+        <div class="fig"><img src="sop_web/pandian_ui.jpg" alt="商品盘点界面"><div class="cap">② 选已有生产批次</div></div>
+        <div class="fig"><img src="sop_web/pandian_dp_ui.jpg" alt="单品盘点界面"><div class="cap">③ 商品单品盘点（有批次）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 参数管理员 -->
+  <section class="job">
+    <div class="jhead"><span class="num" style="background:var(--badbg);color:var(--bad)">05</span><h2>参数管理员 · 开关 / 参数</h2><span class="role">开关错了会丢数据，高危</span></div>
+    <div class="jbody">
+      <div class="row"><b>标准动作</b><p>暂存位生产批次开关：<b>混存阶段关、全批次化后开</b>；存货区简化流程：开启后在仓位设<b>存储区 / 拣货区</b>。</p></div>
+      <div class="row"><b class="rule">铁律</b><p>生产批次开关<b>严禁来回切</b>（丢数据）；一位多批次改回一位一批次，须先把所有一位多批次移成一位一批次。</p></div>
+      <div class="row"><b class="warn">异常怎么纠</b><p>切开关前先全量导出批次库存快照；出问题靠快照恢复，<b>不关功能</b>。</p></div>
+      <div class="imgs">
+        <div class="fig wide"><img src="sop_web/cunjian_switch.jpg" alt="存货区简化流程开关"><div class="cap">存货区简化流程（开启）</div></div>
+        <div class="fig wide"><img src="sop_web/cangwei_pick.jpg" alt="仓位设置拣货"><div class="cap">仓位设「拣货」标识</div></div>
+        <div class="fig wide"><img src="sop_web/batch_rule.jpg" alt="生产批次规则弹窗"><div class="cap">一位多批次改回提示（须先移成一位一批次）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 附：标签样例 + 预约送货红线 -->
+  <section class="extra">
+    <div class="ehead">附 1 · 批次条码长这样（供应商贴标样例）</div>
+    <div class="ebody">
+      <div class="cols">
+        <div class="txt">
+          <div class="row"><b>只看日期数字</b><p>标签下方印的是 8 位日期 <code>20260809</code> / <code>20260810</code>，就是生产批次号。收货/上架扫它即可，<b>不要另外编批次号</b>。</p></div>
+          <div class="row"><b class="rule">供应商贴标协调</b><p>此标签由供应商贴（见方案 D4），若供应商暂不配合，仓库收货台按此样式兜底打印。</p></div>
+        </div>
+        <div class="side"><img src="sop_web/label_sample.jpg" alt="批次条码标签样例"><div class="cap">不干胶批次条码标签样例</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="extra">
+    <div class="ehead">附 2 · P0 红线提醒（预约送货冲突）</div>
+    <div class="ebody">
+      <div class="cols">
+        <div class="txt">
+          <div class="row"><b>开启生产批次后</b><p>现有「供应商预约送货」直接报错 <code>该业务不支持生产批次流程！</code>（需求 R159775 未决）。<b>PLBG 仓重度依赖预约送货，替代入库路径未落地前该仓 FIFO 降级。</b></p></div>
+        </div>
+        <div class="side"><img src="sop_web/yuyue_err.jpg" alt="预约送货报错"><div class="cap">预约送货报错界面</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 培训宣导 -->
+  <section class="extra">
+    <div class="ehead">上岗培训与防错宣导</div>
+    <div class="ebody">
+      <table>
+        <tr><th style="width:130px">阶段</th><th>怎么做</th></tr>
+        <tr><td><b>上岗前</b></td><td>5 岗位各过一遍本 SOP + PDA 实操，重点练「扫标建批 / 上架带出 / 盘点选已有批次」三个动作。</td></tr>
+        <tr><td><b>三句口诀</b></td><td>只扫不手编（批次号）；跟着系统走（拣货不扫批次）；开关不来回切。</td></tr>
+        <tr><td><b>首周盯岗</b></td><td>标杆仓（佳珞裴）上线第一周，主管抽查收货/上架/盘点扫码记录，纠偏后再放独立操作。</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    东莞仓 FIFO · 人员操作 SOP · 截图取自飞书 FIFO 实操笔记（revision 1042）· 由 WorkBuddy 生成
+  </div>
+
+</div>
+</body>
+</html>
