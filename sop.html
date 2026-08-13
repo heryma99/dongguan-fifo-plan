@@ -130,15 +130,15 @@
 
   <!-- 04 盘点员 -->
   <section class="job">
-    <div class="jhead"><span class="num" style="background:var(--warnbg);color:var(--warn)">04</span><h2>盘点员 · 回填 / 校准批次</h2><span class="role">旧库存批次化 + 校准，最容易选错</span></div>
+    <div class="jhead"><span class="num" style="background:var(--warnbg);color:var(--warn)">04</span><h2>盘点员 · 历史回填 / 日常盘点</h2><span class="role">两个场景分开，别混</span></div>
     <div class="jbody">
-      <div class="row"><b>标准动作</b><p>无批次旧库存 →「商品盘点」<b>一次性</b>盘入该仓位 SKU 批次；有批次 →「商品单品盘点」选<b>已有批次</b>。</p></div>
-      <div class="row"><b class="rule">铁律</b><p>选错批次 = 盘盈；<b>必须选已有批次，不新建</b>。旧库存一个仓位一次盘完，不分次。</p></div>
+      <div class="row"><b>场景一 · 历史库存批次回填（上线时一次性）</b><p>无批次旧库存 →「商品盘点」把该仓位 SKU <b>一次性</b>盘入批次；<b>一个仓位一次盘完、不分次</b>。</p></div>
+      <div class="row"><b>场景二 · 日常盘点（有批次商品）</b><p>用「商品单品盘点」选<b>已有批次</b>；<b>必须选已有批次、不新建（选错 = 盘盈）</b>。</p></div>
       <div class="row"><b class="warn">异常怎么纠</b><p>分次盘会导致批次散落 → 退回重盘，一次性盘完整仓位。</p></div>
       <div class="imgs">
-        <div class="fig"><img src="sop_web/pandian_sp.jpg" alt="商品盘点入口"><div class="cap">① 商品盘点（无批次旧库存）</div></div>
-        <div class="fig"><img src="sop_web/pandian_ui.jpg" alt="商品盘点界面"><div class="cap">② 选已有生产批次</div></div>
-        <div class="fig"><img src="sop_web/pandian_dp_ui.jpg" alt="单品盘点界面"><div class="cap">③ 商品单品盘点（有批次）</div></div>
+        <div class="fig"><img src="sop_web/pandian_sp.jpg" alt="商品盘点入口"><div class="cap">场景一 · 商品盘点入口</div></div>
+        <div class="fig"><img src="sop_web/pandian_ui.jpg" alt="商品盘点界面"><div class="cap">场景一 · 选已有批次</div></div>
+        <div class="fig"><img src="sop_web/pandian_dp_ui.jpg" alt="单品盘点界面"><div class="cap">场景二 · 商品单品盘点</div></div>
       </div>
     </div>
   </section>
