@@ -173,11 +173,11 @@
   </section>
 
   <section class="extra">
-    <div class="ehead">附 2 · 上线卡点（预约送货去留 · 二选一）</div>
+    <div class="ehead">附 2 · 上线卡点（预约送货去留 · 全局 · 二选一）</div>
     <div class="ebody">
       <div class="cols">
         <div class="txt">
-          <div class="row"><b>开启生产批次后</b><p>现有「供应商预约送货」直接报错 <code>该业务不支持生产批次流程！</code>（需求 R159775 未决）。这不是可防护的风险，是<b>确定性卡点</b>：要么聚水潭修好，要么取消预约送货——<b>二选一</b>，重度依赖预约送货的 <b>PLBG 仓</b>才能上 FIFO。</p></div>
+          <div class="row"><b>开启生产批次后</b><p>现有「供应商预约送货」功能<b>全局报错</b> <code>该业务不支持生产批次流程！</code>（需求 R159775 未决）——不分仓，任何分仓走预约送货入库都会被卡。这不是可防护的风险，是<b>确定性卡点</b>：要么聚水潭修好，要么取消预约送货、改走按箱入库/普通收货——<b>二选一</b>。<b>PLBG 仓重度依赖预约送货，受影响最重。</b></p></div>
         </div>
         <div class="side"><img src="sop_web/yuyue_err.jpg" alt="预约送货报错"><div class="cap">预约送货报错界面</div></div>
       </div>
