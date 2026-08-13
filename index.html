@@ -142,6 +142,62 @@
     <div class="verdict">✅ <b>结论：可行，无需自研代码。</b> 先拿 <b>佳珞裴-总仓</b> 标杆试点，走顺后逐一落实其余分仓。</div>
   </div>
 
+  <!-- 逻辑总图 -->
+  <div class="svgbox" style="margin-top:16px">
+    <svg viewBox="0 0 1000 362" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <defs><marker id="lg" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#58a6ff"/></marker></defs>
+
+      <text x="500" y="28" fill="#e7edf3" font-size="16" text-anchor="middle" font-weight="bold">东莞仓 FIFO 落地逻辑总览 · 一图看懂</text>
+
+      <!-- 卡点横幅 -->
+      <rect x="20" y="42" width="960" height="46" rx="8" fill="#3a1518" stroke="#f85149"/>
+      <text x="40" y="62" fill="#ff9a93" font-size="13" font-weight="bold">⚠️ 前置卡点 D0 · 预约送货去留</text>
+      <text x="300" y="62" fill="#e7edf3" font-size="12">要么等聚水潭修 R159775，要么停用预约送货、改按采购单入库（否则全局报错）</text>
+
+      <!-- ① 贴标 -->
+      <rect x="20" y="106" width="176" height="82" rx="10" fill="#1c2230" stroke="#d29922"/>
+      <text x="108" y="134" fill="#f0c674" font-size="13" text-anchor="middle" font-weight="bold">① 贴标</text>
+      <text x="108" y="156" fill="#9aa7b4" font-size="11" text-anchor="middle">新货供应商贴</text>
+      <text x="108" y="174" fill="#9aa7b4" font-size="11" text-anchor="middle">库内旧货仓库贴</text>
+      <path d="M196 147 L214 147" stroke="#58a6ff" stroke-width="2" marker-end="url(#lg)"/>
+
+      <!-- ② 收货 -->
+      <rect x="216" y="106" width="176" height="82" rx="10" fill="#1c2230" stroke="#58a6ff"/>
+      <text x="304" y="134" fill="#e7edf3" font-size="13" text-anchor="middle" font-weight="bold">② 收货建批</text>
+      <text x="304" y="156" fill="#9aa7b4" font-size="11" text-anchor="middle">扫外箱批次标</text>
+      <text x="304" y="174" fill="#9aa7b4" font-size="11" text-anchor="middle">系统建生产批次</text>
+      <path d="M392 147 L410 147" stroke="#58a6ff" stroke-width="2" marker-end="url(#lg)"/>
+
+      <!-- ③ 上架 -->
+      <rect x="412" y="106" width="176" height="82" rx="10" fill="#1c2230" stroke="#58a6ff"/>
+      <text x="500" y="134" fill="#e7edf3" font-size="13" text-anchor="middle" font-weight="bold">③ 上架带出</text>
+      <text x="500" y="156" fill="#9aa7b4" font-size="11" text-anchor="middle">扫商品→仓位→批次标</text>
+      <text x="500" y="174" fill="#9aa7b4" font-size="11" text-anchor="middle">批次自动带出</text>
+      <path d="M588 147 L606 147" stroke="#58a6ff" stroke-width="2" marker-end="url(#lg)"/>
+
+      <!-- ④ 拣货 -->
+      <rect x="608" y="106" width="176" height="82" rx="10" fill="#0c150f" stroke="#2ea043"/>
+      <text x="696" y="134" fill="#8ce99a" font-size="13" text-anchor="middle" font-weight="bold">④ 拣货 FIFO</text>
+      <text x="696" y="156" fill="#9aa7b4" font-size="11" text-anchor="middle">系统指派最旧批次</text>
+      <text x="696" y="174" fill="#9aa7b4" font-size="11" text-anchor="middle">拣货不扫批次</text>
+      <path d="M784 147 L802 147" stroke="#58a6ff" stroke-width="2" marker-end="url(#lg)"/>
+
+      <!-- ⑤ 出库 -->
+      <rect x="804" y="106" width="176" height="82" rx="10" fill="#0c150f" stroke="#2ea043"/>
+      <text x="892" y="134" fill="#8ce99a" font-size="13" text-anchor="middle" font-weight="bold">⑤ 出库</text>
+      <text x="892" y="156" fill="#9aa7b4" font-size="11" text-anchor="middle">按单出库</text>
+      <text x="892" y="174" fill="#9aa7b4" font-size="11" text-anchor="middle">最旧批次先出</text>
+
+      <!-- 底部规则 -->
+      <rect x="20" y="208" width="960" height="98" rx="10" fill="#161b22" stroke="#2a3340"/>
+      <text x="40" y="232" fill="#58a6ff" font-size="13" font-weight="bold">关键规则</text>
+      <text x="40" y="256" fill="#e7edf3" font-size="12">• 批次码：日期或非日期均可，<tspan fill="#8ce99a">须在系统中先维护、标准统一</tspan>（一位一批次做不到时，拣货肉眼识别不了，全靠系统）</text>
+      <text x="40" y="278" fill="#e7edf3" font-size="12">• 拣货不扫批次，靠系统指派；<tspan fill="#f0c674">命门在录入端</tspan>——收货 / 上架 / 盘点扫标要准，否则 FIFO 从源头就错</text>
+
+      <text x="500" y="340" fill="#9aa7b4" font-size="12" text-anchor="middle">四层结构：待决策（定什么）→ 注意事项（避什么坑）→ 已确认（已核实）→ 支撑细节（细节查阅）</text>
+    </svg>
+  </div>
+
   <!-- ============ LAYER 1: 待决策 ============ -->
   <section class="layer d" id="L1">
     <div class="head"><span class="bar"></span><span class="tag">待决策</span><h2>待决策</h2></div>
