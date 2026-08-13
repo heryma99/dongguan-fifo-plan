@@ -37,6 +37,13 @@
   .statbar{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:12px;padding-top:12px;border-top:1px solid var(--line2)}
   .statbar b{color:var(--ink);font-weight:700}
   .statbar .r b{color:var(--bad)} .statbar .s b{color:var(--ok)} .statbar .d b{color:var(--blu)}
+  /* kpi */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+  .kpi{border:1px solid var(--line);border-radius:10px;background:#fff;padding:16px 12px;text-align:center}
+  .kpi .num{font-size:34px;font-weight:800;line-height:1;display:block;letter-spacing:-1px}
+  .kpi .lbl{font-size:13px;color:var(--mut);margin-top:6px;display:block}
+  .kpi.k1 .num{color:var(--blu)} .kpi.k2 .num{color:var(--ok)} .kpi.k3 .num{color:var(--bad)} .kpi.k4 .num{color:var(--warn)}
+  @media(max-width:640px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
   /* layer */
   .layer{margin-top:26px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.04)}
   .layer > .head{display:flex;align-items:center;gap:10px;padding:13px 20px;border-bottom:1px solid var(--line);background:#fff}
@@ -59,6 +66,12 @@
   /* fact card */
   .fact{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:8px;background:#fff;padding:11px 15px;margin:9px 0}
   .fact b{color:var(--ink)}
+  .factgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin:10px 0}
+  .fi{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:12px 13px;background:#fff}
+  .fi .ico{font-size:20px;line-height:1.3;flex:0 0 auto}
+  .fi .tt{font-size:14px;font-weight:700;color:var(--ink)}
+  .fi p{margin:3px 0 0;font-size:13px;color:var(--mut)}
+  .fi p.warn{color:var(--warn)}
   /* risk */
   .lane{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
   .risk{font-size:13px;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--mut)}
@@ -119,15 +132,14 @@
   <!-- HERO -->
   <div class="hero">
     <h1>东莞仓 FIFO（先进先出）可行性方案</h1>
-    <div class="sub">聚水潭「生产批次管理」落地 · 6 个分仓 · 基于飞书 FIFO 实操笔记（revision 1042）</div>
-    <div class="verdict">
-      <b>结论：可行，无需自研代码。</b> 聚水潭生产批次管理已具备 FIFO 全部基础能力，落地成败取决于「录入端扫标防错 + 分区存放 + 开关防护」三项执行，而非功能缺失。建议先拿 <b>佳珞裴-总仓</b> 作标杆试点，走顺后逐一落实其余分仓。
+    <div class="sub">聚水潭「生产批次管理」落地 · 基于飞书实操笔记（revision 1042）</div>
+    <div class="kpi-grid">
+      <div class="kpi k1"><span class="num">6</span><span class="lbl">分仓覆盖</span></div>
+      <div class="kpi k2"><span class="num">0</span><span class="lbl">自研代码</span></div>
+      <div class="kpi k3"><span class="num">1</span><span class="lbl">硬卡点</span></div>
+      <div class="kpi k4"><span class="num">8</span><span class="lbl">注意事项</span></div>
     </div>
-    <div class="statbar">
-      <span class="r"><b>8</b> 项风险（无 P0，多为过渡期/纪律类）</span>
-      <span class="d"><b>5</b> 项待决策（含 1 个卡点 D0）</span>
-      <span class="s"><b>10</b> 项已确认事实</span>
-    </div>
+    <div class="verdict">✅ <b>结论：可行，无需自研代码。</b> 先拿 <b>佳珞裴-总仓</b> 标杆试点，走顺后逐一落实其余分仓。</div>
   </div>
 
   <!-- ============ LAYER 1: 风险 ============ -->
@@ -228,16 +240,18 @@
     <div class="head"><span class="bar"></span><span class="tag">已确认</span><h2>已确认事实（验证确定，无需再议）</h2></div>
     <div class="body">
 
-      <div class="fact"><b>① 聚水潭能力底座：</b>「生产批次管理」= FIFO 实现层，已覆盖东莞仓 6 分仓需求，无需自研代码。</div>
-      <div class="fact"><b>② FIFO 数据流（命门在录入端）：</b><b>供应商贴标 ⚠️需采购/供应链协调</b> → 收货扫标建批 → 上架扫标带出 → 拣货系统按"该仓位该 SKU 批次记录"自动 FIFO 指派最旧批次 → 出库。<b>拣货不扫批次</b>，FIFO 由系统保证，风险转移到"上架/盘点录得准不准"。<span style="color:var(--mut);font-size:13px">数据流源头在供应商，仓库无法强制，详见第二层 D4。</span></div>
-      <div class="fact"><b>③ 上架/盘点扫码自动带出：</b>前提是批次先在系统维护，之后扫外箱批次标即自动带出、取消手选（解"上架还要选批次"痛点）。</div>
-      <div class="fact"><b>④ 批次编码规则：</b>以供应商贴的标签为准，扫描录入，<b>不自编、不加后缀、不用系统流水号</b>；格式严格 8 位日期 <code>YYYYMMDD</code>（如 20260811），其他格式一律禁止。<span style="color:var(--warn);font-size:13px">⚠️ 此规则成立的前提是<b>供应商配合贴码</b>——需采购/供应链部门协调推动，属公司级跨部门事项，非仓库可单方面达成。若供应商短期不配合，兜底为仓库收货台现场打印贴标（见 D4）。</span></div>
-      <div class="fact"><b>⑤ 贴码规则：</b>外箱与产品盒都贴生产日期标签，且<b>外箱标须 = 产品标</b>（防内外错配）。</div>
-      <div class="fact"><b>⑥ 全维护批次时按批次 FIFO；</b>同进有/无批次，系统先推无批次（库位从小到大）。</div>
-      <div class="fact"><b>⑦ 存货区简化流程（原生支持）：</b>开启后可在仓位分别设<b>存储区 / 拣货区</b>，即存拣分离的平台入口。</div>
-      <div class="fact"><b>⑧ 调拨已知约束：</b>开启生产批次后，调拨不支持从暂存位发起，须从"仓位"调拨到对应分仓；特别地<b>佳珞裴总仓 → 百世云仓</b> 路径要重点验证。（云仓 FIFO 不在本方案范围，由云仓自身负责，不验证。）</div>
-      <div class="fact"><b>⑨ 卡板堆叠纪律：</b>库位足够时铺开存放、<b>不码太高太深</b>，让旧批次始终停在易取层，物理上降低"随手抓到新批次"的概率，压低伪 FIFO 残留漏洞影响面。</div>
-      <div class="fact"><b>⑩ 试点顺序已定：</b>FIFO 对 6 个分仓均重要，差异只在推广顺序——先拿 <b>佳珞裴-总仓</b> 作标杆试点（覆盖全业务场景、日发货量小影响小），走顺后逐一落实其余分仓。此为非领导拍板的业务侧决定。</div>
+      <div class="factgrid">
+        <div class="fi"><span class="ico">🛠️</span><div><span class="tt">能力底座</span><p>生产批次管理 = FIFO 实现层，覆盖 6 分仓，无需自研代码</p></div></div>
+        <div class="fi"><span class="ico">🔄</span><div><span class="tt">数据流</span><p>供应商贴标 → 收货建批 → 上架带出 → 拣货按最旧批次出；<b>拣货不扫批次</b>，靠系统保证</p></div></div>
+        <div class="fi"><span class="ico">📱</span><div><span class="tt">扫码带出</span><p>批次先维护，扫外箱批次标即自动带出、取消手选</p></div></div>
+        <div class="fi"><span class="ico">🏷️</span><div><span class="tt">批次编码</span><p>以供应商贴标为准，严格 8 位 <code>YYYYMMDD</code>，不自编不加后缀</p><p class="warn">⚠️ 前提供应商配合贴码（跨部门协调，见 D4）</p></div></div>
+        <div class="fi"><span class="ico">🔖</span><div><span class="tt">贴码规则</span><p>外箱与产品盒都贴，且<b>外箱标 = 产品标</b>（防内外错配）</p></div></div>
+        <div class="fi"><span class="ico">⚖️</span><div><span class="tt">按批次 FIFO</span><p>全维护批次后按批次 FIFO；混有/无批次先推无批次（库位从小到大）</p></div></div>
+        <div class="fi"><span class="ico">🗂️</span><div><span class="tt">存货区简化</span><p>开启后可设<b>存储区 / 拣货区</b>，是存拣分离的平台入口</p></div></div>
+        <div class="fi"><span class="ico">🚚</span><div><span class="tt">调拨约束</span><p>不从暂存位发起，从仓位调拨；<b>佳珞裴→百世云仓</b>需重点验证（云仓 FIFO 由云仓自管）</p></div></div>
+        <div class="fi"><span class="ico">📦</span><div><span class="tt">卡板堆叠</span><p><b>不码太高太深</b>，旧批次放易取层，压低伪 FIFO 残留</p></div></div>
+        <div class="fi"><span class="ico">🎯</span><div><span class="tt">试点顺序</span><p>先拿 <b>佳珞裴-总仓</b>标杆试点，走顺逐一落实</p></div></div>
+      </div>
 
     </div>
   </section>
